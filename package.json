@@ -62,6 +62,6 @@
     "ws": "^7.2.1"
   },
   "scripts": {
-    "editor": "parcel build src/editor.html --no-source-maps --no-minify"
+    "build-editor": "parcel build src/editor.html --no-content-hash --no-source-maps --no-minify"
   }
 }
