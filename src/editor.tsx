@@ -148,15 +148,13 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
               }
             ]
           },
-          query.job
-            ? {
-                size: 800,
-                tabs: [this.createBlockEditorTab(query.job)],
-                id: 'main',
-                panelLock: {panelStyle: 'main'}
-              }
-            : null
-        ].filter((a) => a)
+          {
+            size: 800,
+            tabs: query.job ? [this.createBlockEditorTab(query.job)] : [],
+            id: 'main',
+            panelLock: {panelStyle: 'main'}
+          }
+        ]
       }
     };
     return (
