@@ -173,8 +173,10 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
 (async () => {
   await initEditor();
   let client;
-  if (query.ws) {
-    client = new WsBrowserConnection(query.ws);
+  if (query.host) {
+    if (query.host.startsWith('ws')) {
+      client = new WsBrowserConnection(query.host);
+    }
   } else if (window.opener) {
     client = new FrameClientConnection(window.opener);
   }
