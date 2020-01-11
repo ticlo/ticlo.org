@@ -127,8 +127,8 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
             size: 200,
             tabs: [
               {
-                id: 'Types',
-                title: 'Types',
+                id: 'Functions',
+                title: 'Functions',
                 cached: true,
                 content: <TypeTree conn={conn} style={{height: '100%'}} />
               },
