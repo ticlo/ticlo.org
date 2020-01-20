@@ -8,16 +8,16 @@ import {ClientConnection} from '@ticlo/core/connect/ClientConnection';
 import {TypeTree} from '@ticlo/editor/type-selector/TypeTree';
 import {Logger} from '@ticlo/core/util/Logger';
 import {WorkerFunction} from '@ticlo/core/worker/WorkerFunction';
-import {BlockStageTab} from '@ticlo/editor/dock/block/BlockStageTab';
+import {BlockStagePane} from '@ticlo/editor/dock/block/BlockStagePane';
 import {TicloLayoutContext, TicloLayoutContextType} from '@ticlo/editor/component/LayoutContext';
 import {PropDispatcher} from '@ticlo/core/block/Dispatcher';
-import {PropertyListTab} from '@ticlo/editor/dock/property/PropertyListTab';
+import {PropertyListPane} from '@ticlo/editor/dock/property/PropertyListPane';
 import {WsBrowserConnection} from '@ticlo/html/connect/WsBrowserConnection';
 import {FrameClientConnection} from '@ticlo/html/connect/FrameClientConnection';
-import {NodeTreeTab} from '@ticlo/editor/dock/node-tree/NodeTreeTab';
-import {TextEditorTab} from '@ticlo/editor/dock/text-editor/TextEditorTab';
+import {NodeTreePane} from '@ticlo/editor/dock/node-tree/NodeTreePane';
+import {TextEditorPane} from '@ticlo/editor/dock/text-editor/TextEditorPane';
 
-import {ObjectTreeTab} from './dock/object-tree/ObjectTreeTab';
+import {ObjectTreePane} from './dock/object-tree/ObjectTreePane';
 
 let query = qs.parse(window.location.search.substring(1));
 
@@ -26,7 +26,7 @@ const layoutGroups = {
     animated: false,
     floatable: true
   },
-  objectTree: ObjectTreeTab.dockGroup
+  objectTree: ObjectTreePane.dockGroup
 };
 
 interface Props {
@@ -62,7 +62,7 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
 
   createBlockEditorTab(path: string, onSave?: () => void) {
     let {conn} = this.props;
-    return BlockStageTab.createDockTab(path, conn, this.onSelect, onSave);
+    return BlockStagePane.createDockTab(path, conn, this.onSelect, onSave);
   }
 
   /// implements TicloLayoutContext
@@ -78,14 +78,14 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
         mime = 'application/json';
       }
     }
-    TextEditorTab.openFloatPanel(this.layout, conn, paths, defaultValue, mime, readonly);
+    TextEditorPane.openFloatPanel(this.layout, conn, paths, defaultValue, mime, readonly);
   }
   showObjectTree(path: string, value: any, element: HTMLElement, source: any) {
     let {conn} = this.props;
-    ObjectTreeTab.openFloatPanel(this.layout, path, conn, value, element, source, 18, 0);
+    ObjectTreePane.openFloatPanel(this.layout, path, conn, value, element, source, 18, 0);
   }
   closeObjectTree(path: string, source: any) {
-    ObjectTreeTab.closeFloatPanel(this.layout, path, source);
+    ObjectTreePane.closeFloatPanel(this.layout, path, source);
   }
 
   onDragBlock = (e: DragState) => {
@@ -124,33 +124,51 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
         mode: 'horizontal',
         children: [
           {
+            mode: 'vertical',
             size: 200,
-            tabs: [
+            children: [
               {
-                id: 'Functions',
-                title: 'Functions',
-                cached: true,
-                content: <TypeTree conn={conn} style={{height: '100%'}} />
+                tabs: [
+                  {
+                    id: 'Navigation',
+                    title: 'Navigation',
+                    cached: true,
+                    cacheContext: TicloLayoutContextType,
+                    content: (
+                      <NodeTreePane
+                        conn={conn}
+                        basePaths={['']}
+                        hideRoot={true}
+                        onSelect={this.onSelect}
+                        showMenu={true}
+                      />
+                    )
+                  }
+                ]
               },
               {
-                id: 'PropertyList',
-                title: 'PropertyList',
-                cached: true,
-                cacheContext: TicloLayoutContextType,
-                content: <PropertyListTab conn={conn} />
-              },
-              {
-                id: 'NavTree',
-                title: 'NavTree',
-                cached: true,
-                cacheContext: TicloLayoutContextType,
-                content: <NodeTreeTab conn={conn} basePaths={['']} hideRoot={true} onSelect={this.onSelect} />
+                tabs: [
+                  {
+                    id: 'Functions',
+                    title: 'Functions',
+                    cached: true,
+                    content: <TypeTree conn={conn} style={{height: '100%'}} />
+                  },
+                  {
+                    id: 'Properties',
+                    title: 'Properties',
+                    cached: true,
+                    cacheContext: TicloLayoutContextType,
+                    content: <PropertyListPane conn={conn} />
+                  }
+                ]
               }
             ]
           },
+
           {
             size: 800,
-            tabs: query.job ? [this.createBlockEditorTab(query.job)] : [],
+            tabs: query.job ? [this.createBlockEditorTab(query.job, () => conn.applyJobChange(query.job))] : [],
             id: 'main',
             panelLock: {panelStyle: 'main'}
           }
