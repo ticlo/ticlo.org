@@ -5,7 +5,6 @@ import qs from 'qs';
 import {FunctionDesc, PropDesc} from '@ticlo/core/editor';
 import {initEditor, PropertyList, BlockStage, NodeTree} from '@ticlo/editor';
 import {ClientConnection} from '@ticlo/core/connect/ClientConnection';
-import {TypeTree} from '@ticlo/editor/type-selector/TypeTree';
 import {Logger} from '@ticlo/core/util/Logger';
 import {WorkerFunction} from '@ticlo/core/worker/WorkerFunction';
 import {BlockStagePane} from '@ticlo/editor/dock/block/BlockStagePane';
@@ -18,6 +17,7 @@ import {NodeTreePane} from '@ticlo/editor/dock/node-tree/NodeTreePane';
 import {TextEditorPane} from '@ticlo/editor/dock/text-editor/TextEditorPane';
 
 import {ObjectTreePane} from './dock/object-tree/ObjectTreePane';
+import {FunctionSelect} from '@ticlo/editor/function-selector/FunctionSelector';
 
 let query = qs.parse(window.location.search.substring(1));
 
@@ -152,7 +152,8 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
                     id: 'Functions',
                     title: 'Functions',
                     cached: true,
-                    content: <TypeTree conn={conn} style={{height: '100%'}} />
+                    cacheContext: TicloLayoutContextType,
+                    content: <FunctionSelect conn={conn} />
                   },
                   {
                     id: 'Properties',
