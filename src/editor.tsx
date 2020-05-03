@@ -1,5 +1,8 @@
+import 'moment';
+import 'moment-timezone';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import {DragState, DockLayout} from 'rc-dock';
 import qs from 'qs';
 import {FunctionDesc, PropDesc} from '@ticlo/core/editor';
@@ -18,6 +21,7 @@ import {TextEditorPane} from '@ticlo/editor/dock/text-editor/TextEditorPane';
 
 import {ObjectTreePane} from './dock/object-tree/ObjectTreePane';
 import {FunctionSelect} from '@ticlo/editor/function-selector/FunctionSelector';
+
 
 let query = qs.parse(window.location.search.substring(1));
 
@@ -66,7 +70,7 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
   }
 
   /// implements TicloLayoutContext
-  editJob(path: string, onSave: () => void) {
+  editFlow(path: string, onSave: () => void) {
     this.layout.dockMove(this.createBlockEditorTab(path, onSave), this.layout.find('main'), 'middle');
   }
   editProperty(paths: string[], propDesc: PropDesc, defaultValue?: any, mime?: string, readonly?: boolean): void {
@@ -169,7 +173,7 @@ class App extends React.PureComponent<Props, State> implements TicloLayoutContex
 
           {
             size: 800,
-            tabs: query.job ? [this.createBlockEditorTab(query.job, () => conn.applyJobChange(query.job))] : [],
+            tabs: query.flow ? [this.createBlockEditorTab(query.flow, () => conn.applyFlowChange(query.flow))] : [],
             id: 'main',
             panelLock: {panelStyle: 'main'}
           }
