@@ -38,7 +38,7 @@
     "cross-env": "^7.0.2",
     "dompurify": "^2.0.8",
     "less": "^3.11.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "marked": "^0.8.2",
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.0.2",
