@@ -33,7 +33,7 @@
     "@types/tinycolor2": "^1.4.2",
     "@types/ws": "^7.2.3",
     "antd": "^4.1.0",
-    "codemirror": "^5.52.2",
+    "codemirror": "^5.58.2",
     "coveralls": "^3.0.11",
     "cross-env": "^7.0.2",
     "dompurify": "^2.0.8",
