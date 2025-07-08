@@ -14,6 +14,11 @@ jobs:
       id-token: write
       contents: read
     
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -34,35 +39,20 @@ jobs:
     - name: Build project
       run: npm run vite-build
       
-    - name: Checkout gh-pages branch
-      uses: actions/checkout@v4
+    - name: Copy CNAME to dist
+      run: |
+        if [ -f CNAME ]; then
+          cp CNAME dist/CNAME
+        fi
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        ref: gh-pages
-        path: gh-pages
+        path: dist
         
-    - name: Preserve CNAME file
-      run: |
-        if [ -f gh-pages/CNAME ]; then
-          cp gh-pages/CNAME dist/CNAME
-        fi
-        
-    - name: Deploy to gh-pages branch
-      run: |
-        cd gh-pages
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        
-        # Sync files from dist to current directory
-        # This will only modify files that are actually different
-        rsync -av --delete --exclude='.git' ../dist/ ./
-        
-        # Add all changes
-        git add .
-        
-        # Commit if there are changes
-        if [ -n "$(git status --porcelain)" ]; then
-          git commit -m "Deploy from commit ${{ github.sha }}"
-          git push origin gh-pages
-        else
-          echo "No changes to deploy"
-        fi
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
